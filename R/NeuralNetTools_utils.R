@@ -5,7 +5,7 @@
 #' @param mod_in input object for which an organized model list is desired.  The input can be an object of class \code{numeric}, \code{nnet}, \code{mlp}, or \code{nn} 
 #' @param ... arguments passed to other methods
 #' 
-#' @export neuralweights
+#' @export
 #' 
 #' @import neuralnet nnet RSNNS
 #' 
@@ -59,7 +59,7 @@ neuralweights <-  function(mod_in, ...) UseMethod('neuralweights')
 #' 
 #' @import scales
 #' 
-#' @export neuralweights.numeric
+#' @export
 #' 
 #' @method neuralweights numeric
 neuralweights.numeric <-  function(mod_in, rel_rsc = NULL, struct, ...){
@@ -95,7 +95,7 @@ neuralweights.numeric <-  function(mod_in, rel_rsc = NULL, struct, ...){
 #' 
 #' @import scales
 #'
-#' @export neuralweights.nnet
+#' @export
 #'  
 #' @method neuralweights nnet
 neuralweights.nnet <-  function(mod_in, rel_rsc = NULL, ...){
@@ -128,7 +128,7 @@ neuralweights.nnet <-  function(mod_in, rel_rsc = NULL, ...){
 #' 
 #' @import scales reshape2
 #'
-#' @export neuralweights.mlp
+#' @export
 #'
 #' @method neuralweights mlp
 neuralweights.mlp <-  function(mod_in, rel_rsc = NULL, ...){
@@ -180,7 +180,7 @@ neuralweights.mlp <-  function(mod_in, rel_rsc = NULL, ...){
 #'   
 #' @import scales
 #'   
-#' @export neuralweights.nn
+#' @export
 #'
 #' @method neuralweights nn
 neuralweights.nn <- function(mod_in, rel_rsc = NULL, ...){
@@ -233,7 +233,7 @@ neuralweights.nn <- function(mod_in, rel_rsc = NULL, ...){
 #' 
 #' @return A \code{\link{data.frame}} of predictions and the sequence values of the selected explanatory variable
 #' 
-#' @export pred_sens
+#' @export
 #' 
 #' @examples
 #' 
@@ -254,9 +254,11 @@ pred_sens <- function(mat_in, mod_in, var_sel, step_val, fun_in, resp_name){
   mat_out <- data.frame(mat_out)
   names(mat_out) <- names(mat_in)
   
-  mat_cons <- mat_in[, !names(mat_in) %in% var_sel]
+  mat_cons <- mat_in[, !names(mat_in) %in% var_sel, drop = F]
   mat_cons <- apply(mat_cons, 2, fun_in)
-  mat_out[, !names(mat_in) %in% var_sel] <- t(sapply(1:step_val, function(x) mat_cons))
+  mat_cons <- sapply(1:step_val, function(x) mat_cons)
+  if(!'numeric' %in% class(mat_cons)) mat_cons <- t(mat_cons)
+  mat_out[, !names(mat_in) %in% var_sel] <- mat_cons
   
   mat_out[, var_sel] <- seq(min(mat_in[, var_sel]), max(mat_in[, var_sel]), length = step_val)
   

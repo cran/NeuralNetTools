@@ -107,7 +107,7 @@ plotnet <- function(mod_in, ...) UseMethod('plotnet')
 #' 
 #' @import scales
 #' 
-#' @export plotnet.nnet
+#' @export
 #' 
 #' @method plotnet nnet
 plotnet.nnet <- function(mod_in, nid = TRUE, all_out = TRUE, all_in = TRUE, bias = TRUE, wts_only = FALSE, rel_rsc = 5, circle_cex = 5, node_labs = TRUE, var_labs = TRUE, x_lab = NULL, y_lab = NULL, line_stag = NULL, cex_val = 1, alpha_val = 1, circle_col = 'lightblue', pos_col = 'black', neg_col = 'grey', bord_col = 'lightblue', max_sp = FALSE, ...){
@@ -160,7 +160,7 @@ plotnet.nnet <- function(mod_in, nid = TRUE, all_out = TRUE, all_in = TRUE, bias
   }
   
   #initiate plot
-  plot(x_range, y_range, type = 'n', axes = FALSE, ylab = '', xlab = '', ...)
+  plot(x_range, y_range, type = 'n', axes = FALSE, ylab = '', xlab = '')
   
   #function for getting y locations for input, hidden, output layers
   #input is integer value from 'struct'
@@ -192,7 +192,7 @@ plotnet.nnet <- function(mod_in, nid = TRUE, all_out = TRUE, all_in = TRUE, bias
   #'bias_x' is vector of values for x locations
   #'bias_y' is vector for y location
   #'layer_name' is  string indicating text to put in node
-  bias_points <- function(bias_x, bias_y, layer_name, cex, ...){
+  bias_points <- function(bias_x, bias_y, layer_name, cex){
     for(val in 1:length(bias_x)){
       points(
         diff(x_range) * bias_x[val], 
@@ -211,7 +211,7 @@ plotnet.nnet <- function(mod_in, nid = TRUE, all_out = TRUE, all_in = TRUE, bias
   
   #function creates lines colored by direction and width as proportion of magnitude
   #use 'all_in' argument if you want to plot connection lines for only a single input node
-  layer_lines <- function(mod_in, h_layer, layer1 = 1, layer2 = 2, out_layer = FALSE, nid, rel_rsc, all_in, pos_col, neg_col, ...){
+  layer_lines <- function(mod_in, h_layer, layer1 = 1, layer2 = 2, out_layer = FALSE, nid, rel_rsc, all_in, pos_col, neg_col){
     
     x0 <- rep(layer_x[layer1] * diff(x_range) + line_stag * diff(x_range), struct[layer1])
     x1 <- rep(layer_x[layer2] * diff(x_range) - line_stag * diff(x_range), struct[layer1])
@@ -259,7 +259,7 @@ plotnet.nnet <- function(mod_in, nid = TRUE, all_out = TRUE, all_in = TRUE, bias
     
   }
   
-  bias_lines <- function(bias_x, mod_in, nid, rel_rsc, all_out, pos_col, neg_col, ...){
+  bias_lines <- function(bias_x, mod_in, nid, rel_rsc, all_out, pos_col, neg_col){
     
     if(is.logical(all_out)) all_out <- 1:struct[length(struct)]
     else all_out <- which(y_names == all_out)
@@ -376,7 +376,7 @@ plotnet.nnet <- function(mod_in, nid = TRUE, all_out = TRUE, all_in = TRUE, bias
 #' 
 #' @import scales
 #' 
-#' @export plotnet.numeric
+#' @export
 #' 
 #' @method plotnet numeric
 plotnet.numeric <- function(mod_in, struct, nid = TRUE, all_out = TRUE, all_in = TRUE, bias = TRUE, wts_only = FALSE, rel_rsc = 5, circle_cex = 5, node_labs = TRUE, var_labs = TRUE, x_lab = NULL, y_lab = NULL, line_stag = NULL, cex_val = 1, alpha_val = 1, circle_col = 'lightblue', pos_col = 'black', neg_col = 'grey', bord_col = 'lightblue', max_sp = FALSE, ...){
@@ -424,7 +424,7 @@ plotnet.numeric <- function(mod_in, struct, nid = TRUE, all_out = TRUE, all_in =
   }
   
   #initiate plot
-  plot(x_range, y_range, type = 'n', axes = FALSE, ylab = '', xlab = '', ...)
+  plot(x_range, y_range, type = 'n', axes = FALSE, ylab = '', xlab = '')
   
   #function for getting y locations for input, hidden, output layers
   #input is integer value from 'struct'
@@ -456,7 +456,7 @@ plotnet.numeric <- function(mod_in, struct, nid = TRUE, all_out = TRUE, all_in =
   #'bias_x' is vector of values for x locations
   #'bias_y' is vector for y location
   #'layer_name' is  string indicating text to put in node
-  bias_points <- function(bias_x, bias_y, layer_name, cex, ...){
+  bias_points <- function(bias_x, bias_y, layer_name, cex){
     for(val in 1:length(bias_x)){
       points(
         diff(x_range) * bias_x[val], 
@@ -475,7 +475,7 @@ plotnet.numeric <- function(mod_in, struct, nid = TRUE, all_out = TRUE, all_in =
   
   #function creates lines colored by direction and width as proportion of magnitude
   #use 'all_in' argument if you want to plot connection lines for only a single input node
-  layer_lines <- function(mod_in, h_layer, layer1 = 1, layer2 = 2, out_layer = FALSE, nid, rel_rsc, all_in, pos_col, neg_col, ...){
+  layer_lines <- function(mod_in, h_layer, layer1 = 1, layer2 = 2, out_layer = FALSE, nid, rel_rsc, all_in, pos_col, neg_col){
     
     x0 <- rep(layer_x[layer1] * diff(x_range) + line_stag * diff(x_range), struct[layer1])
     x1 <- rep(layer_x[layer2] * diff(x_range) - line_stag * diff(x_range), struct[layer1])
@@ -523,7 +523,7 @@ plotnet.numeric <- function(mod_in, struct, nid = TRUE, all_out = TRUE, all_in =
     
   }
   
-  bias_lines <- function(bias_x, mod_in, nid, rel_rsc, all_out, pos_col, neg_col, ...){
+  bias_lines <- function(bias_x, mod_in, nid, rel_rsc, all_out, pos_col, neg_col){
     
     if(is.logical(all_out)) all_out <- 1:struct[length(struct)]
     else all_out <- which(y_names == all_out)
@@ -638,7 +638,7 @@ plotnet.numeric <- function(mod_in, struct, nid = TRUE, all_out = TRUE, all_in =
 #' 
 #' @import scales
 #' 
-#' @export plotnet.mlp
+#' @export
 #' 
 #' @method plotnet mlp
 plotnet.mlp <- function(mod_in, nid = TRUE, all_out = TRUE, all_in = TRUE, wts_only = FALSE, rel_rsc = 5, circle_cex = 5, node_labs = TRUE, var_labs = TRUE, x_lab = NULL, y_lab = NULL, line_stag = NULL, cex_val = 1, alpha_val = 1, circle_col = 'lightblue', pos_col = 'black', neg_col = 'grey', bord_col = 'lightblue', max_sp = FALSE, ...){
@@ -681,7 +681,7 @@ plotnet.mlp <- function(mod_in, nid = TRUE, all_out = TRUE, all_in = TRUE, wts_o
   }
   
   #initiate plot
-  plot(x_range, y_range, type = 'n', axes = FALSE, ylab = '', xlab = '', ...)
+  plot(x_range, y_range, type = 'n', axes = FALSE, ylab = '', xlab = '')
   
   #function for getting y locations for input, hidden, output layers
   #input is integer value from 'struct'
@@ -711,7 +711,7 @@ plotnet.mlp <- function(mod_in, nid = TRUE, all_out = TRUE, all_in = TRUE, wts_o
   
   #function creates lines colored by direction and width as proportion of magnitude
   #use 'all_in' argument if you want to plot connection lines for only a single input node
-  layer_lines <- function(mod_in, h_layer, layer1 = 1, layer2 = 2, out_layer = FALSE, nid, rel_rsc, all_in, pos_col, neg_col, ...){
+  layer_lines <- function(mod_in, h_layer, layer1 = 1, layer2 = 2, out_layer = FALSE, nid, rel_rsc, all_in, pos_col, neg_col){
     
     x0 <- rep(layer_x[layer1] * diff(x_range) + line_stag * diff(x_range), struct[layer1])
     x1 <- rep(layer_x[layer2] * diff(x_range) - line_stag * diff(x_range), struct[layer1])
@@ -811,7 +811,7 @@ plotnet.mlp <- function(mod_in, nid = TRUE, all_out = TRUE, all_in = TRUE, wts_o
 #' 
 #' @import scales
 #' 
-#' @export plotnet.nn
+#' @export
 #' 
 #' @method plotnet nn
 plotnet.nn <- function(mod_in, nid = TRUE, all_out = TRUE, all_in = TRUE, bias = TRUE, wts_only = FALSE, rel_rsc = 5, circle_cex = 5, node_labs = TRUE, var_labs = TRUE, x_lab = NULL, y_lab = NULL, line_stag = NULL, cex_val = 1, alpha_val = 1, circle_col = 'lightblue', pos_col = 'black', neg_col = 'grey', bord_col = 'lightblue', max_sp = FALSE, ...){
@@ -855,7 +855,7 @@ plotnet.nn <- function(mod_in, nid = TRUE, all_out = TRUE, all_in = TRUE, bias =
   }
   
   #initiate plot
-  plot(x_range, y_range, type = 'n', axes = FALSE, ylab = '', xlab = '', ...)
+  plot(x_range, y_range, type = 'n', axes = FALSE, ylab = '', xlab = '')
   
   #function for getting y locations for input, hidden, output layers
   #input is integer value from 'struct'
@@ -887,7 +887,7 @@ plotnet.nn <- function(mod_in, nid = TRUE, all_out = TRUE, all_in = TRUE, bias =
   #'bias_x' is vector of values for x locations
   #'bias_y' is vector for y location
   #'layer_name' is  string indicating text to put in node
-  bias_points <- function(bias_x, bias_y, layer_name, cex, ...){
+  bias_points <- function(bias_x, bias_y, layer_name, cex){
     for(val in 1:length(bias_x)){
       points(
         diff(x_range) * bias_x[val], 
@@ -906,7 +906,7 @@ plotnet.nn <- function(mod_in, nid = TRUE, all_out = TRUE, all_in = TRUE, bias =
   
   #function creates lines colored by direction and width as proportion of magnitude
   #use 'all_in' argument if you want to plot connection lines for only a single input node
-  layer_lines <- function(mod_in, h_layer, layer1 = 1, layer2 = 2, out_layer = FALSE, nid, rel_rsc, all_in, pos_col, neg_col, ...){
+  layer_lines <- function(mod_in, h_layer, layer1 = 1, layer2 = 2, out_layer = FALSE, nid, rel_rsc, all_in, pos_col, neg_col){
     
     x0 <- rep(layer_x[layer1] * diff(x_range) + line_stag * diff(x_range), struct[layer1])
     x1 <- rep(layer_x[layer2] * diff(x_range) - line_stag * diff(x_range), struct[layer1])
@@ -954,7 +954,7 @@ plotnet.nn <- function(mod_in, nid = TRUE, all_out = TRUE, all_in = TRUE, bias =
     
   }
   
-  bias_lines <- function(bias_x, mod_in, nid, rel_rsc, all_out, pos_col, neg_col, ...){
+  bias_lines <- function(bias_x, mod_in, nid, rel_rsc, all_out, pos_col, neg_col){
     
     if(is.logical(all_out)) all_out <- 1:struct[length(struct)]
     else all_out <- which(y_names == all_out)
@@ -1069,7 +1069,7 @@ plotnet.nn <- function(mod_in, nid = TRUE, all_out = TRUE, all_in = TRUE, bias =
 #' 
 #' @import scales
 #' 
-#' @export plotnet.train
+#' @export
 #' 
 #' @method plotnet train
 plotnet.train <- function(mod_in, nid = TRUE, all_out = TRUE, all_in = TRUE, bias = TRUE, wts_only = FALSE, rel_rsc = 5, circle_cex = 5, node_labs = TRUE, var_labs = TRUE, x_lab = NULL, y_lab = NULL, line_stag = NULL, cex_val = 1, alpha_val = 1, circle_col = 'lightblue', pos_col = 'black', neg_col = 'grey', bord_col = 'lightblue', max_sp = FALSE, ...){
@@ -1111,7 +1111,7 @@ plotnet.train <- function(mod_in, nid = TRUE, all_out = TRUE, all_in = TRUE, bia
   }
   
   #initiate plot
-  plot(x_range, y_range, type = 'n', axes = FALSE, ylab = '', xlab = '', ...)
+  plot(x_range, y_range, type = 'n', axes = FALSE, ylab = '', xlab = '')
   
   #function for getting y locations for input, hidden, output layers
   #input is integer value from 'struct'
@@ -1143,7 +1143,7 @@ plotnet.train <- function(mod_in, nid = TRUE, all_out = TRUE, all_in = TRUE, bia
   #'bias_x' is vector of values for x locations
   #'bias_y' is vector for y location
   #'layer_name' is  string indicating text to put in node
-  bias_points <- function(bias_x, bias_y, layer_name, cex, ...){
+  bias_points <- function(bias_x, bias_y, layer_name, cex){
     for(val in 1:length(bias_x)){
       points(
         diff(x_range) * bias_x[val], 
@@ -1162,7 +1162,7 @@ plotnet.train <- function(mod_in, nid = TRUE, all_out = TRUE, all_in = TRUE, bia
   
   #function creates lines colored by direction and width as proportion of magnitude
   #use 'all_in' argument if you want to plot connection lines for only a single input node
-  layer_lines <- function(mod_in, h_layer, layer1 = 1, layer2 = 2, out_layer = FALSE, nid, rel_rsc, all_in, pos_col, neg_col, ...){
+  layer_lines <- function(mod_in, h_layer, layer1 = 1, layer2 = 2, out_layer = FALSE, nid, rel_rsc, all_in, pos_col, neg_col){
     
     x0 <- rep(layer_x[layer1] * diff(x_range) + line_stag * diff(x_range), struct[layer1])
     x1 <- rep(layer_x[layer2] * diff(x_range) - line_stag * diff(x_range), struct[layer1])
@@ -1210,7 +1210,7 @@ plotnet.train <- function(mod_in, nid = TRUE, all_out = TRUE, all_in = TRUE, bia
     
   }
   
-  bias_lines <- function(bias_x, mod_in, nid, rel_rsc, all_out, pos_col, neg_col, ...){
+  bias_lines <- function(bias_x, mod_in, nid, rel_rsc, all_out, pos_col, neg_col){
     
     if(is.logical(all_out)) all_out <- 1:struct[length(struct)]
     else all_out <- which(y_names == all_out)
