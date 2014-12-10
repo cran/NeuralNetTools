@@ -1,0 +1,15 @@
+22e3cd38c5fdaf0a83c5f4c0486a6473 *DESCRIPTION
+9ec5d882cd11b60c9b8a04db7487568c *NAMESPACE
+ea29483798818eed5df086cbc92ce2f4 *R/NeuralNetTools_gar.R
+780db94f31c0799328fd10cff30eba6c *R/NeuralNetTools_lek.R
+59d854ee5e93afb004bf14e85c8644a4 *R/NeuralNetTools_neuraldat.R
+068bc61bd545dfec3982bbf1b81290aa *R/NeuralNetTools_plot.R
+7a2ae520d6f3c26b91789e79c97c24a4 *R/NeuralNetTools_utils.R
+e01865ede9947eed1e62bc3f665f5141 *README.md
+bb1bbf70f86a824c03b3a7b9babf3ed9 *data/neuraldat.RData
+f1381b869c2ba6c3c2739a3e0d5a62f1 *man/garson.Rd
+5e80282d3b13bb2ca206248507d373b3 *man/lekprofile.Rd
+7e0fc892284822e46b96ed3eac66a6e7 *man/neuraldat.Rd
+64160b9c05e9fb4bf9efb78c25936d98 *man/neuralweights.Rd
+66b974140a55672af5eca55b702654a6 *man/plotnet.Rd
+cc668a1fa99bf9d69b2ea658244b573f *man/pred_sens.Rd
