@@ -97,7 +97,7 @@
 #' ## color input nodes by relative importance
 #' mod <- nnet(Y1 ~ X1 + X2 + X3, data = neuraldat, size = 5)
 #'  
-#' rel_imp <- garson(mod, 'Y1', bar_plot = FALSE)$rel_imp
+#' rel_imp <- garson(mod, bar_plot = FALSE)$rel_imp
 #' cols <- colorRampPalette(c('lightgreen', 'darkgreen'))(3)[rank(rel_imp)]
 #'  
 #' plotnet(mod, circle_col = list(cols, 'lightblue'))
@@ -115,6 +115,11 @@ plotnet.nnet <- function(mod_in, nid = TRUE, all_out = TRUE, all_in = TRUE, bias
   wts <- neuralweights(mod_in)
   struct <- wts$struct
   wts <- wts$wts
+  
+  # check for skip layers
+  chk <- grepl('skip-layer', capture.output(mod_in))
+  if(any(chk))
+    warning('Skip layer used, results may be inaccurate because input and output connections are removed')
   
   if(wts_only) return(wts)
   
@@ -1080,6 +1085,11 @@ plotnet.train <- function(mod_in, nid = TRUE, all_out = TRUE, all_in = TRUE, bia
   wts <- neuralweights(mod_in)
   struct <- wts$struct
   wts <- wts$wts
+  
+  # check for skip layers
+  chk <- grepl('skip-layer', capture.output(mod_in))
+  if(any(chk))
+    warning('Skip layer used, results may be inaccurate because input and output connections are removed')
   
   if(wts_only) return(wts)
   

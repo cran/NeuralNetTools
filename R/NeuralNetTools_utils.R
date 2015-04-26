@@ -11,7 +11,9 @@
 #' 
 #' @return Returns a two-element list with the first element being a vector indicating the number of nodes in each layer of the neural network and the second element being a named list of weight values for the input model.  
 #' 
-#' @details Each element of the returned list is named using the construct 'layer node', e.g. 'out 1' is the first node of the output layer.  Hidden layers are named using three values for instances with more than one hidden layer, e.g., 'hidden 1 1' is the first node in the first hidden layer, 'hidden 1 2' is the second node in the first hidden layer, 'hidden 2 1' is the first node in the second hidden layer, etc.  The values in each element of the list represent the weights entering the specific node from the preceding layer in sequential order, starting with the bias layer if applicable.  
+#' @details Each element of the returned list is named using the construct 'layer node', e.g. 'out 1' is the first node of the output layer.  Hidden layers are named using three values for instances with more than one hidden layer, e.g., 'hidden 1 1' is the first node in the first hidden layer, 'hidden 1 2' is the second node in the first hidden layer, 'hidden 2 1' is the first node in the second hidden layer, etc.  The values in each element of the list represent the weights entering the specific node from the preceding layer in sequential order, starting with the bias layer if applicable.  For example, the elements in a list item for 'hidden 1 1' of a neural network with a 3 5 1 structure (3 inputs, 5 hidden nodes, 1 output) would have four values indicating the weights in sequence from the bias layer, first input layer, second input layer, and third input layer going to the first hidden node.    
+#' 
+#' The function will remove direct weight connections between input and output layers if the neural network was created with a skip-layer using \code{skip = TRUE} with the \code{\link[nnet]{nnet}}  or \code{\link[caret]{train}} functions.  This may produce misleading results when evaluating variable performance with the \code{\link{garson}} function.  
 #' 
 #' @examples
 #' 
@@ -103,7 +105,15 @@ neuralweights.nnet <-  function(mod_in, rel_rsc = NULL, ...){
   struct <-  mod_in$n
   wts <-  mod_in$wts
   
-  if(!is.null(rel_rsc)) wts <-  scales::rescale(abs(wts), c(1, rel_rsc))
+  if(!is.null(rel_rsc)) wts <- scales::rescale(abs(wts), c(1, rel_rsc))
+  
+  # remove wts from input to output if skip layers present
+  chk <- grepl('skip-layer', capture.output(mod_in))
+  if(any(chk)){
+    coefs <- coef(mod_in)
+    rems <- grepl('^i.*>o', names(coefs))
+    wts <- wts[!rems]
+  }
   
   #convert wts to list with appropriate names 
   hid_struct <-  struct[ -c(length(struct))]
@@ -116,6 +126,7 @@ neuralweights.nnet <-  function(mod_in, rel_rsc = NULL, ...){
     row_nms, 
     rep(paste('out', seq(1:struct[length(struct)])), each = 1 + struct[length(struct) - 1])
   )
+  
   out_ls <-  data.frame(wts, row_nms)
   out_ls$row_nms <-  factor(row_nms, levels = unique(row_nms), labels = unique(row_nms))
   out_ls <-  split(out_ls$wts, f = out_ls$row_nms)
@@ -266,5 +277,63 @@ pred_sens <- function(mat_in, mod_in, var_sel, step_val, fun_in, resp_name){
   names(out) <- resp_name
   x_vars <- mat_out[, var_sel]
   data.frame(out, x_vars)
+  
+}
+
+#' Get weights for the skip layer in a neural network
+#'
+#' Get weights for the skip layer in a neural network, only valid for networks created using \code{skip = TRUE} with the \code{\link[nnet]{nnet}} function.
+#'
+#' @param mod_in input object for which an organized model list is desired. 
+#' @param ... arguments passed to other methods
+#' 
+#' @export
+#' 
+#' @return return a numeric vector in sequential order of the weights for the direct connection between input and output layers
+#' 
+#' @details This function is similar to \code{\link{neuralweights}} except only the skip layer weights are returned.
+#' 
+#' @examples
+#' 
+#' data(neuraldat)
+#' set.seed(123)
+#' 
+#' ## using nnet
+#' 
+#' library(nnet)
+#' 
+#' mod <- nnet(Y1 ~ X1 + X2 + X3, data = neuraldat, size = 5, linout = TRUE, 
+#'  skip = TRUE)
+#'  
+#' neuralskips(mod)  
+#' 
+neuralskips <-  function(mod_in, ...) UseMethod('neuralskips')
+
+#' @rdname neuralskips
+#' 
+#' @import scales
+#'
+#' @export
+#'  
+#' @method neuralskips nnet
+neuralskips.nnet <-  function(mod_in, ...){
+  
+  wts <-  mod_in$wts
+  
+  # get skip layer weights if present, otherwise exit
+  chk <- grepl('skip-layer', capture.output(mod_in))
+  if(any(chk)){
+    
+    coefs <- coef(mod_in)
+    skips <- grepl('^i.*>o', names(coefs))
+    skips <- wts[skips]
+    
+  } else {
+    
+    stop('No skip layer')
+    
+  }
+  
+  return(skips)
   
 }
