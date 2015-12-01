@@ -7,15 +7,17 @@
 \usage{
 neuralskips(mod_in, ...)
 
-\method{neuralskips}{nnet}(mod_in, ...)
+\method{neuralskips}{nnet}(mod_in, rel_rsc = NULL, ...)
 }
 \arguments{
 \item{mod_in}{input object for which an organized model list is desired.}
 
 \item{...}{arguments passed to other methods}
+
+\item{rel_rsc}{numeric indicating the scaling range for the width of connection weights in a neural interpretation diagram. Default is \code{NULL} for no rescaling.  Scaling is relative to all weights, not just those in the primary network.}
 }
 \value{
-return a numeric vector in sequential order of the weights for the direct connection between input and output layers
+Returns a list of connections for each output node, where each element of the list is the connection for each input node in sequential order to the respective output node.  The first weight in each element is not the bias connection, unlike the results for \code{\link{neuralweights}}.
 }
 \description{
 Get weights for the skip layer in a neural network, only valid for networks created using \code{skip = TRUE} with the \code{\link[nnet]{nnet}} function.

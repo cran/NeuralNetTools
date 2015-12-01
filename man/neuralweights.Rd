@@ -23,7 +23,7 @@ neuralweights(mod_in, ...)
 
 \item{...}{arguments passed to other methods}
 
-\item{rel_rsc}{numeric value indicating maximum to rescale weights for plotting in a neural interpretation diagram. Default is \code{NULL} for no rescaling.}
+\item{rel_rsc}{numeric indicating the scaling range for the width of connection weights in a neural interpretation diagram. Default is \code{NULL} for no rescaling.}
 
 \item{struct}{numeric vector equal in length to the number of layers in the network.  Each number indicates the number of nodes in each layer starting with the input and ending with the output.  An arbitrary number of hidden layers can be included.}
 }
@@ -57,6 +57,7 @@ mod <- nnet(Y1 ~ X1 + X2 + X3, data = neuraldat, size = 5, linout = TRUE)
 
 neuralweights(mod)
 
+\dontrun{
 ## using RSNNS, no bias layers
 
 library(RSNNS)
@@ -67,6 +68,15 @@ mod <- mlp(x, y, size = 5, linOut = TRUE)
 
 neuralweights(mod)
 
+# pruned model using code from RSSNS pruning demo
+pruneFuncParams <- list(max_pr_error_increase = 10.0, pr_accepted_error = 1.0,
+ no_of_pr_retrain_cycles = 1000, min_error_to_stop = 0.01, init_matrix_value = 1e-6,
+ input_pruning = TRUE, hidden_pruning = TRUE)
+mod <- mlp(x, y, size = 5, pruneFunc = "OptimalBrainSurgeon",
+ pruneFuncParams = pruneFuncParams)
+
+neuralweights(mod)
+
 ## using neuralnet
 
 library(neuralnet)
@@ -74,5 +84,6 @@ library(neuralnet)
 mod <- neuralnet(Y1 ~ X1 + X2 + X3, data = neuraldat, hidden = 5)
 
 neuralweights(mod)
+}
 }
 

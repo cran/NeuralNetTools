@@ -2,6 +2,7 @@
 % Please edit documentation in R/NeuralNetTools_plot.R
 \name{plotnet}
 \alias{plotnet}
+\alias{plotnet.default}
 \alias{plotnet.mlp}
 \alias{plotnet.nn}
 \alias{plotnet.nnet}
@@ -11,45 +12,38 @@
 \usage{
 plotnet(mod_in, ...)
 
-\method{plotnet}{nnet}(mod_in, nid = TRUE, all_out = TRUE, all_in = TRUE,
-  bias = TRUE, wts_only = FALSE, rel_rsc = 5, circle_cex = 5,
-  node_labs = TRUE, var_labs = TRUE, x_lab = NULL, y_lab = NULL,
+\method{plotnet}{default}(mod_in, x_names, y_names, struct = NULL,
+  nid = TRUE, all_out = TRUE, all_in = TRUE, bias = TRUE,
+  rel_rsc = c(1, 7), circle_cex = 5, node_labs = TRUE, var_labs = TRUE,
   line_stag = NULL, cex_val = 1, alpha_val = 1,
   circle_col = "lightblue", pos_col = "black", neg_col = "grey",
-  bord_col = "lightblue", max_sp = FALSE, ...)
+  bord_col = "lightblue", max_sp = FALSE, prune_col = NULL,
+  prune_lty = "dashed", skip = NULL, ...)
 
-\method{plotnet}{numeric}(mod_in, struct, nid = TRUE, all_out = TRUE,
-  all_in = TRUE, bias = TRUE, wts_only = FALSE, rel_rsc = 5,
-  circle_cex = 5, node_labs = TRUE, var_labs = TRUE, x_lab = NULL,
-  y_lab = NULL, line_stag = NULL, cex_val = 1, alpha_val = 1,
-  circle_col = "lightblue", pos_col = "black", neg_col = "grey",
-  bord_col = "lightblue", max_sp = FALSE, ...)
+\method{plotnet}{nnet}(mod_in, x_names = NULL, y_names = NULL,
+  skip = FALSE, ...)
 
-\method{plotnet}{mlp}(mod_in, nid = TRUE, all_out = TRUE, all_in = TRUE,
-  wts_only = FALSE, rel_rsc = 5, circle_cex = 5, node_labs = TRUE,
-  var_labs = TRUE, x_lab = NULL, y_lab = NULL, line_stag = NULL,
-  cex_val = 1, alpha_val = 1, circle_col = "lightblue",
-  pos_col = "black", neg_col = "grey", bord_col = "lightblue",
-  max_sp = FALSE, ...)
+\method{plotnet}{numeric}(mod_in, struct, x_names = NULL, y_names = NULL,
+  ...)
 
-\method{plotnet}{nn}(mod_in, nid = TRUE, all_out = TRUE, all_in = TRUE,
-  bias = TRUE, wts_only = FALSE, rel_rsc = 5, circle_cex = 5,
-  node_labs = TRUE, var_labs = TRUE, x_lab = NULL, y_lab = NULL,
-  line_stag = NULL, cex_val = 1, alpha_val = 1,
-  circle_col = "lightblue", pos_col = "black", neg_col = "grey",
-  bord_col = "lightblue", max_sp = FALSE, ...)
+\method{plotnet}{mlp}(mod_in, x_names = NULL, y_names = NULL,
+  prune_col = NULL, prune_lty = "dashed", ...)
 
-\method{plotnet}{train}(mod_in, nid = TRUE, all_out = TRUE, all_in = TRUE,
-  bias = TRUE, wts_only = FALSE, rel_rsc = 5, circle_cex = 5,
-  node_labs = TRUE, var_labs = TRUE, x_lab = NULL, y_lab = NULL,
-  line_stag = NULL, cex_val = 1, alpha_val = 1,
-  circle_col = "lightblue", pos_col = "black", neg_col = "grey",
-  bord_col = "lightblue", max_sp = FALSE, ...)
+\method{plotnet}{nn}(mod_in, x_names = NULL, y_names = NULL, ...)
+
+\method{plotnet}{train}(mod_in, x_names = NULL, y_names = NULL,
+  skip = FALSE, ...)
 }
 \arguments{
 \item{mod_in}{neural network object or numeric vector of weights}
 
 \item{...}{additional arguments passed to plot}
+
+\item{x_names}{chr string indicating names for input variables, default from model object}
+
+\item{y_names}{chr string indicating names for output variables, default from model object}
+
+\item{struct}{numeric vector equal in length to the number of layers in the network.  Each number indicates the number of nodes in each layer starting with the input and ending with the output.  An arbitrary number of hidden layers can be included.}
 
 \item{nid}{logical value indicating if neural interpretation diagram is plotted, default \code{TRUE}}
 
@@ -57,21 +51,15 @@ plotnet(mod_in, ...)
 
 \item{all_in}{chr string indicating names of input variables for which connections are plotted, default all}
 
-\item{bias}{logical value indicating if bias nodes and connections are plotted, not applicable for networks from \code{\link[RSNNS]{mlp}} function, default \code{TRUE}}
+\item{bias}{logical value indicating if bias nodes and connections are plotted, default \code{TRUE}}
 
-\item{wts_only}{logical value indicating if connections weights are returned rather than a plot, default \code{FALSE}}
-
-\item{rel_rsc}{numeric value indicating maximum width of connection lines, default 5}
+\item{rel_rsc}{numeric indicating the scaling range for the width of connection weights}
 
 \item{circle_cex}{numeric value indicating size of nodes, default 5}
 
 \item{node_labs}{logical value indicating if labels are plotted directly on nodes, default \code{TRUE}}
 
 \item{var_labs}{logical value indicating if variable names are plotted next to nodes, default \code{TRUE}}
-
-\item{x_lab}{chr string indicating names for input variables, default from model object}
-
-\item{y_lab}{chr string indicating names for output variables, default from model object}
 
 \item{line_stag}{numeric value that specifies distance of connection weights from nodes}
 
@@ -89,7 +77,11 @@ plotnet(mod_in, ...)
 
 \item{max_sp}{logical value indicating if space between nodes in each layer is maximized, default \code{FALSE}}
 
-\item{struct}{numeric vector equal in length to the number of layers in the network.  Each number indicates the number of nodes in each layer starting with the input and ending with the output.  An arbitrary number of hidden layers can be included.}
+\item{prune_col}{chr string indicating color of pruned connections, otherwise not shown}
+
+\item{prune_lty}{line type for pruned connections, passed to \code{\link[graphics]{segments}}}
+
+\item{skip}{logical if skip layer connections are plotted instead of the primary network}
 }
 \value{
 A graphics object unless \code{wts_only = TRUE}, then neural network weights from \code{\link{neuralweights}}.
@@ -99,6 +91,8 @@ Plot a neural interpretation diagram for a neural network object
 }
 \details{
 This function plots a neural network as a neural interpretation diagram as in Ozesmi and Ozesmi (1999). Options to plot without color-coding or shading of weights are also provided.  The default settings plot positive weights between layers as black lines and negative weights as grey lines. Line thickness is in proportion to relative magnitude of each weight. The first layer includes only input variables with nodes labelled arbitrarily as I1 through In for n input variables.  One through many hidden layers are plotted with each node in each layer labelled as H1 through Hn.  The output layer is plotted last with nodes labeled as O1 through On.  Bias nodes connected to the hidden and output layers are also shown.  Neural networks created using \code{\link[RSNNS]{mlp}} do not show bias layers.
+
+A primary network and a skip layer network can be plotted for \code{\link[nnet]{nnet}} models with a skip layer connection.  The default is to plot the primary network, whereas the skip layer network can be viewed with \code{skip = TRUE}.  If \code{nid = TRUE}, the line widths for both the primary and skip layer plots are relative to all weights.  Viewing both plots is recommended to see which network has larger relative weights.  Plotting a network with only a skip layer (i.e., no hidden layer, \code{size = 0}) will include bias connections to the output layer, whereas these are not included in the plot of the skip layer if \code{size} is greater than zero.
 }
 \examples{
 ## using numeric input
@@ -119,6 +113,13 @@ mod <- nnet(Y1 ~ X1 + X2 + X3, data = neuraldat, size = 5)
 
 plotnet(mod)
 
+## plot the skip layer from nnet model
+
+mod <- nnet(Y1 ~ X1 + X2 + X3, data = neuraldat, size = 5, skip = TRUE)
+
+plotnet(mod, skip = TRUE)
+
+\dontrun{
 ## using RSNNS, no bias layers
 
 library(RSNNS)
@@ -128,6 +129,16 @@ y <- neuraldat[, 'Y1']
 mod <- mlp(x, y, size = 5)
 
 plotnet(mod)
+
+# pruned model using code from RSSNS pruning demo
+pruneFuncParams <- list(max_pr_error_increase = 10.0, pr_accepted_error = 1.0,
+ no_of_pr_retrain_cycles = 1000, min_error_to_stop = 0.01, init_matrix_value = 1e-6,
+ input_pruning = TRUE, hidden_pruning = TRUE)
+mod <- mlp(x, y, size = 5, pruneFunc = "OptimalBrainSurgeon",
+ pruneFuncParams = pruneFuncParams)
+
+plotnet(mod)
+plotnet(mod, prune_col = 'lightblue')
 
 ## using neuralnet
 
@@ -139,13 +150,11 @@ plotnet(mod)
 
 ## using caret
 
-\dontrun{
 library(caret)
 
 mod <- train(Y1 ~ X1 + X2 + X3, method = 'nnet', data = neuraldat, linout = TRUE)
 
 plotnet(mod)
-}
 
 ## a more complicated network with categorical response
 AND <- c(rep(0, 7), 1)
@@ -158,6 +167,16 @@ mod <- neuralnet(AND + OR ~ Var1 + Var2 + Var3, binary_data,
 
 plotnet(mod)
 
+## recreate the previous example with numeric inputs
+
+# get the weights and structure in the right format
+wts <- neuralweights(mod)
+struct <- wts$struct
+wts <- unlist(wts$wts)
+
+# plot
+plotnet(wts, struct = struct)
+
 ## color input nodes by relative importance
 mod <- nnet(Y1 ~ X1 + X2 + X3, data = neuraldat, size = 5)
 
@@ -165,6 +184,7 @@ rel_imp <- garson(mod, bar_plot = FALSE)$rel_imp
 cols <- colorRampPalette(c('lightgreen', 'darkgreen'))(3)[rank(rel_imp)]
 
 plotnet(mod, circle_col = list(cols, 'lightblue'))
+}
 }
 \references{
 Ozesmi, S.L., Ozesmi, U. 1999. An artificial neural network approach to spatial habitat modeling with interspecific interaction. Ecological Modelling. 116:15-31.
