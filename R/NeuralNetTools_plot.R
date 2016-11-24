@@ -24,11 +24,11 @@
 #' @param prune_lty line type for pruned connections, passed to \code{\link[graphics]{segments}}
 #' @param max_sp logical value indicating if space between nodes in each layer is maximized, default \code{FALSE}
 #' @param skip logical if skip layer connections are plotted instead of the primary network
-#' @param ...	additional arguments passed to plot
+#' @param ...	additional arguments passed to or from other methods
+#' 
+#' @import ggplot2
 #' 
 #' @export
-#' 
-#' @import scales
 #' 
 #' @references
 #' Ozesmi, S.L., Ozesmi, U. 1999. An artificial neural network approach to spatial habitat modeling with interspecific interaction. Ecological Modelling. 116:15-31.
@@ -40,12 +40,25 @@
 #' 
 #' A primary network and a skip layer network can be plotted for \code{\link[nnet]{nnet}} models with a skip layer connection.  The default is to plot the primary network, whereas the skip layer network can be viewed with \code{skip = TRUE}.  If \code{nid = TRUE}, the line widths for both the primary and skip layer plots are relative to all weights.  Viewing both plots is recommended to see which network has larger relative weights.  Plotting a network with only a skip layer (i.e., no hidden layer, \code{size = 0}) will include bias connections to the output layer, whereas these are not included in the plot of the skip layer if \code{size} is greater than zero.
 #'  
+#' The numeric method for plotting requires the input weights to be in a specific order given the structure of the network.  An additional argument \code{struct} (from \code{\link{neuralweights}} is also required that lists the number of nodes in the input, hidden, and output layers.  The example below for the numeric input shows the correct weight vector for a simple neural network model with two input variables, one output variable, and one hidden layer with two nodes.  Bias nodes are also connected to the hidden and output layer.  Using the plot syntax of I, H, O, and B for input, hidden, output, and bias to indicate weighted connections between layers, the correct weight order for the \code{mod_in} vector is B1-H1, I1-H1, I2-H1, B1-H2, I1-H2, I2-H2, B2-O1, H1-O1, H2-O1.  For a generic network (three layers) with n input nodes, j hidden nodes, and k output nodes, the weights are ordered as the connections from B1, I1,...,In to H1,...,Hj, then B2, H1,..,Hj to O1,...,Ok. 
+#' 
 #' @examples 
 #' ## using numeric input
 #' 
+#' # B1-H1, I1-H1, I2-H1, B1-H2, I1-H2, I2-H2, B2-O1, H1-O1, H2-O1.
 #' wts_in <- c(13.12, 1.49, 0.16, -0.11, -0.19, -0.16, 0.56, -0.52, 0.81)
 #' struct <- c(2, 2, 1) #two inputs, two hidden, one output 
 #' 
+#' plotnet(wts_in, struct = struct)
+#' 
+#' # numeric input, two hidden layers
+#' 
+#' # B1-H11, I1-H11, I2-H11, B1-H12, I1-H12, I2-H12, B2-H21, H11-H21, H12-H21, 
+#' # B2-H22, H11-H22, H12-H22, B3-O1, H21-O1, H22-O1 
+#' wts_in <- c(1.12, 1.49, 0.16, -0.11, -0.19, -0.16, 0.5, 0.2, -0.12, -0.1, 
+#'  0.89, 0.9, 0.56, -0.52, 0.81)
+#' struct <- c(2, 2, 2, 1) # two inputs, two (two nodes each), one output 
+#'
 #' plotnet(wts_in, struct = struct)
 #' 
 #' ## using nnet
@@ -177,7 +190,7 @@ plotnet.default <- function(mod_in, x_names, y_names, struct = NULL, nid = TRUE,
       
       # plot connections usign layer lines with skip TRUE
       mapply(
-        function(x) layer_lines(mod_in, x, layer1 = 1, layer2 = length(struct), out_layer = TRUE, nid = nid, rel_rsc = rel_rsc, all_in = all_in, pos_col = scales::alpha(pos_col, alpha_val), neg_col = scales::alpha(neg_col, alpha_val), x_range = x_range, y_range = y_range, line_stag = line_stag, x_names = x_names, layer_x = layer_x, max_sp = max_sp, struct = struct, prune_col = prune_col, prune_lty = prune_lty, skip = skip), 
+        function(x) layer_lines(mod_in, x, layer1 = 1, layer2 = length(struct), out_layer = TRUE, nid = nid, rel_rsc = rel_rsc, all_in = all_in, pos_col = alpha(pos_col, alpha_val), neg_col = alpha(neg_col, alpha_val), x_range = x_range, y_range = y_range, line_stag = line_stag, x_names = x_names, layer_x = layer_x, max_sp = max_sp, struct = struct, prune_col = prune_col, prune_lty = prune_lty, skip = skip), 
         1:struct[length(struct)]
       )
       
@@ -198,7 +211,7 @@ plotnet.default <- function(mod_in, x_names, y_names, struct = NULL, nid = TRUE,
         layer_x <- rep(layer_x[length(layer_x)], length(layer_x)) # repeat this for last layer
         bias_points(max(bias_x), bias_y, 'B', node_labs, x_range, 
           y_range, circle_cex, cex_val, bord_col, circle_col)
-        bias_lines(max(bias_x), bias_y, mod_in, nid = nid, rel_rsc = rel_rsc, all_out = all_out, pos_col = scales::alpha(pos_col, alpha_val), neg_col = scales::alpha(neg_col, alpha_val), y_names = y_names, x_range = x_range, max_sp = max_sp, struct = struct[c(1, length(struct))], y_range = y_range, layer_x = layer_x, line_stag = line_stag)
+        bias_lines(max(bias_x), bias_y, mod_in, nid = nid, rel_rsc = rel_rsc, all_out = all_out, pos_col = alpha(pos_col, alpha_val), neg_col = alpha(neg_col, alpha_val), y_names = y_names, x_range = x_range, max_sp = max_sp, struct = struct[c(1, length(struct))], y_range = y_range, layer_x = layer_x, line_stag = line_stag)
       }
       
     })
@@ -207,7 +220,7 @@ plotnet.default <- function(mod_in, x_names, y_names, struct = NULL, nid = TRUE,
   
   #use functions to plot connections between layers
   #bias lines
-  if(bias) bias_lines(bias_x, bias_y, mod_in, nid = nid, rel_rsc = rel_rsc, all_out = all_out, pos_col = scales::alpha(pos_col, alpha_val), neg_col = scales::alpha(neg_col, alpha_val), y_names = y_names, x_range = x_range, max_sp = max_sp, struct = struct, y_range = y_range, layer_x = layer_x, line_stag = line_stag)
+  if(bias) bias_lines(bias_x, bias_y, mod_in, nid = nid, rel_rsc = rel_rsc, all_out = all_out, pos_col = alpha(pos_col, alpha_val), neg_col = alpha(neg_col, alpha_val), y_names = y_names, x_range = x_range, max_sp = max_sp, struct = struct, y_range = y_range, layer_x = layer_x, line_stag = line_stag)
 
   #layer lines,  makes use of arguments to plot all or for individual layers
   #starts with input - hidden
@@ -215,8 +228,8 @@ plotnet.default <- function(mod_in, x_names, y_names, struct = NULL, nid = TRUE,
   if(is.logical(all_in)){  
     mapply(
       function(x) layer_lines(mod_in, x, layer1 = 1, layer2 = 2, nid = nid, rel_rsc = rel_rsc, 
-        all_in = all_in, pos_col = scales::alpha(pos_col, alpha_val), 
-        neg_col = scales::alpha(neg_col, alpha_val), x_range = x_range, y_range = y_range, 
+        all_in = all_in, pos_col = alpha(pos_col, alpha_val), 
+        neg_col = alpha(neg_col, alpha_val), x_range = x_range, y_range = y_range, 
         line_stag = line_stag, x_names = x_names, layer_x = layer_x, max_sp = max_sp, struct = struct, 
         prune_col = prune_col, prune_lty = prune_lty),
       1:struct[1]
@@ -225,7 +238,7 @@ plotnet.default <- function(mod_in, x_names, y_names, struct = NULL, nid = TRUE,
   else{
     node_in <- which(x_names == all_in)
     layer_lines(mod_in, node_in, layer1 = 1, layer2 = 2, nid = nid, rel_rsc = rel_rsc, all_in = all_in, 
-      pos_col = scales::alpha(pos_col, alpha_val), neg_col = scales::alpha(neg_col, alpha_val), 
+      pos_col = alpha(pos_col, alpha_val), neg_col = alpha(neg_col, alpha_val), 
       x_range = x_range, y_range = y_range, line_stag = line_stag, x_names = x_names, layer_x = layer_x,
       max_sp = max_sp, struct = struct, prune_col = prune_col, prune_lty = prune_lty)
   }
@@ -237,7 +250,7 @@ plotnet.default <- function(mod_in, x_names, y_names, struct = NULL, nid = TRUE,
   for(lay in lays){
     for(node in 1:struct[lay[1]]){
       layer_lines(mod_in, node, layer1 = lay[1], layer2 = lay[2], nid = nid, rel_rsc = rel_rsc, all_in = TRUE, 
-        pos_col = scales::alpha(pos_col, alpha_val), neg_col = scales::alpha(neg_col, alpha_val), 
+        pos_col = alpha(pos_col, alpha_val), neg_col = alpha(neg_col, alpha_val), 
         x_range = x_range, y_range = y_range, line_stag = line_stag, x_names = x_names, layer_x = layer_x,
         max_sp = max_sp, struct = struct, prune_col = prune_col, prune_lty = prune_lty, skip = skip)
     }
@@ -246,7 +259,7 @@ plotnet.default <- function(mod_in, x_names, y_names, struct = NULL, nid = TRUE,
   #uses 'all_out' argument to plot connection lines for all output nodes or a single node
   if(is.logical(all_out))
     mapply(
-      function(x) layer_lines(mod_in, x, layer1 = length(struct) - 1, layer2 = length(struct), out_layer = TRUE, nid = nid, rel_rsc = rel_rsc, all_in = all_in, pos_col = scales::alpha(pos_col, alpha_val), neg_col = scales::alpha(neg_col, alpha_val), x_range = x_range, y_range = y_range, line_stag = line_stag, x_names = x_names, layer_x = layer_x, max_sp = max_sp, struct = struct, prune_col = prune_col, prune_lty = prune_lty, skip = skip), 
+      function(x) layer_lines(mod_in, x, layer1 = length(struct) - 1, layer2 = length(struct), out_layer = TRUE, nid = nid, rel_rsc = rel_rsc, all_in = all_in, pos_col = alpha(pos_col, alpha_val), neg_col = alpha(neg_col, alpha_val), x_range = x_range, y_range = y_range, line_stag = line_stag, x_names = x_names, layer_x = layer_x, max_sp = max_sp, struct = struct, prune_col = prune_col, prune_lty = prune_lty, skip = skip), 
       1:struct[length(struct)]
     )
   else{

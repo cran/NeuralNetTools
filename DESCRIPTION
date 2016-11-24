@@ -1,8 +1,8 @@
 Package: NeuralNetTools
 Type: Package
 Title: Visualization and Analysis Tools for Neural Networks
-Version: 1.4.0
-Date: 2015-11-30
+Version: 1.5.0
+Date: 2016-11-24
 Author: Marcus W. Beck [aut, cre]
 Maintainer: Marcus W. Beck <mbafs2012@gmail.com>
 Description: Visualization and analysis tools to aid in the interpretation of
@@ -12,13 +12,14 @@ Description: Visualization and analysis tools to aid in the interpretation of
 BugReports: https://github.com/fawda123/NeuralNetTools/issues
 License: CC0
 LazyData: true
-Imports: ggplot2, nnet, reshape2, scales, tidyr
+Imports: ggplot2 (>= 2.0.0), nnet, reshape2, scales, tidyr
 Suggests: caret, neuralnet, RSNNS
 Depends: R (>= 3.1.1)
 Authors@R: person(given = "Marcus W.", family = "Beck",
     role = c("aut","cre"),
     email = "mbafs2012@gmail.com")
+RoxygenNote: 5.0.1
 NeedsCompilation: no
-Packaged: 2015-11-30 23:22:18 UTC; MBeck
+Packaged: 2016-11-24 23:19:25 UTC; Marcus
 Repository: CRAN
-Date/Publication: 2015-12-01 08:01:07
+Date/Publication: 2016-11-25 00:27:31
