@@ -118,7 +118,7 @@ olden.default <- function(mod_in, x_names, y_names, out_var = NULL, bar_plot = T
   
   # stop if out_var is not a named variable
   if(!out_var %in% y_names) stop(paste('out_var must match one:', paste(y_names, collapse = ', ')))
-  else out_ind <- grep(out_var, y_names)
+  else out_ind <- grep(out_var, y_names, fixed = TRUE)
   
   #change variables names to user sub 
   if(!is.null(x_lab)){
@@ -139,9 +139,9 @@ olden.default <- function(mod_in, x_names, y_names, out_var = NULL, bar_plot = T
   split_vals <- substr(names(inp_hid), 1, 8)
   inp_hid <- split(inp_hid, split_vals)
   inp_hid <- lapply(inp_hid, function(x) t(do.call('rbind', x))[-1, ])
-  
+
   # final layer weights for output
-  hid_out <- wts_in[[grep(paste('out', out_ind), names(wts_in))]][-1]
+  hid_out <- wts_in[[paste('out', out_ind)]][-1]
   
   # matrix multiplication of output layer with connecting hidden layer
   max_i <- length(inp_hid)
